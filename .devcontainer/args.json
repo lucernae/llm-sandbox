@@ -1,0 +1,4 @@
+{
+  "useDirenv": "true",
+  "useFlake": "true"
+}
