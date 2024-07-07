@@ -30,6 +30,23 @@
                 llm-sandbox = self;
               };
             };
+          jupyter-server = writeShellApplication {
+            name = "jupyter-server";
+            text = ''
+              exec "${self.packages.${system}.llm-sandbox}/bin/jupyter" "notebook" "$@"
+            '';
+          };
+        };
+
+        apps = {
+          jupyter = {
+            type = "app";
+            program = "${self.packages.${system}.llm-sandbox}/bin/jupyter";
+          };
+          jupyter-server = {
+            type = "app";
+            program = "${self.packages.${system}.jupyter-server}/bin/jupyter-server";
+          };
         };
 
         formatter = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
@@ -50,7 +67,10 @@
               pkgs.pre-commit
             ];
 
-            commands = [ ];
+            commands = [{
+              name = "jupyter";
+              command = ''${pkgs.poetry}/bin/poetry run jupyter "$@"'';
+            }];
             env = [ ];
           };
         devShells.default = self.devShells.${system}.devshell;
